@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<b:beans xmlns="http://www.springframework.org/schema/security"
+         xmlns:b="http://www.springframework.org/schema/beans"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns:context="http://www.springframework.org/schema/context"
+         xmlns:aop="http://www.springframework.org/schema/aop"
+         xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+                        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.0.xsd
+                        http://www.springframework.org/schema/aop
+                        http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+                        http://www.springframework.org/schema/context
+                        http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+    <http pattern="/login.jsp" security="none"></http>
+    <http pattern="/error.jsp" security="none"/>
+
+    <http auto-config="true" >
+       <!-- <custom-filter ref="security" before="FILTER_SECURITY_INTERCEPTOR"/>
+        <custom-filter ref="authenticationFilter" after="SECURITY_CONTEXT_FILTER"/>-->
+        <!--login-page的路径一定得在项目中找到，路径要符合-->
+        <!---->
+        <form-login username-parameter="username" password-parameter="password" login-page="/login.jsp"  authentication-failure-url="/login.jsp?error=true"></form-login>
+    <!--    <intercept-url pattern="/user/*" access="hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')" />
+        <intercept-url pattern="/admin/*" access="hasRole('ROLE_ADMIN')"/>-->
+        <csrf disabled="true"/>
+        <!--配置403显示的也面-->
+        <access-denied-handler error-page="/error.jsp"/>
+    </http>
+
+    <!--uses-by-username-query通过用户名查询用户信息-->
+    <!--authorities-by-username-query通过用户名查询权限信息-->
+    <!--group-authorities-by-username-query通过用户名查询用户组权限-->
+   <!-- <b:bean id="myUserService" class="com.lzj.util.MyUserDetails"/>-->
+    <authentication-manager>
+        <authentication-provider user-service-ref="detailsService">
+
+
+      <!--      <user-service>
+                <user name="li" password="123" authorities="ROLE_USER"></user>
+                <user name="admin" password="admin" authorities="ROLE_ADMIN"/>
+            </user-service>-->
+            <!--要是查询两个报错 3>2 查询大于三个密码用户名错误-->
+          <!--  <jdbc-user-service data-source-ref="dataSource"
+                users-by-username-query="SELECT  username,password,status FROM springsecurity.user where username=?;"
+                authorities-by-username-query="SELECT u.username,r.name FROM (springsecurity.user u inner join springsecurity.role_user ru on u.id=ru.user_id) inner join springsecurity.role r on r.id=ru.role_id where u.username=?"
+            />-->
+        </authentication-provider>
+    </authentication-manager>
+<!--    <b:bean id="security" class="com.lzj.util.MySecurityInterceptor">
+        <b:property name="securityMetadataSource" ref="securityMetadataSource"></b:property>
+        <b:property name="accessDecisionManager" ref="accessDecisionManager"></b:property>
+        <b:property name="authenticationManager" ref="authenticationManager"></b:property>
+    </b:bean>
+    <b:bean id="securityMetadataSource" class="com.lzj.util.MyMetadataSource">
+    </b:bean>
+    <b:bean id="accessDecisionManager" class="com.lzj.util.MyAccessDesisionManager" >
+    </b:bean>
+    <b:bean id="authenticationManager" class="org.springframework.security.authentication.ProviderManager">
+        <b:constructor-arg name="providers" >
+            <b:list>
+               <b:ref bean="provider"></b:ref>
+            </b:list>
+        </b:constructor-arg>
+    </b:bean>
+    <b:bean id="provider" class="com.lzj.util.MyDaoAuthenticationProvider" ></b:bean>
+    <b:bean id="authenticationFilter" class="com.lzj.util.MyAuthenticationFilter">
+        <b:property name="authenticationManager" ref="authenticationManager"/>
+    </b:bean>-->
+    <b:bean id="detailsService" class="com.lzj.util.MyUserDetailsService"></b:bean>
+
+</b:beans>
